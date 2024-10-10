@@ -4,7 +4,7 @@ import App from './App'
 import './styles/login.css'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  //<StrictMode>
     <App />
-  </StrictMode>,
+ // </StrictMode>
 )

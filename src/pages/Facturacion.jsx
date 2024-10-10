@@ -9,7 +9,7 @@ const Facturas = () => {
     useEffect(() => {
  const fetchFacturas = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/facturas');
+                const response = await axios.get('http://localhost:3001/factura/factura');
                 
                 if (Array.isArray(response.data)) {
                     setFacturas(response.data);
@@ -40,7 +40,7 @@ const Facturas = () => {
             <ul>
                 {facturas.length > 0 ? (
                     facturas.map(factura => (
-                        <li key={factura.id_factura}>
+                        <li key={factura.id}>
                             Cliente: {factura.nombre_cliente}, Total: {factura.total}, Fecha: {factura.fecha}
                         </li>
                     ))

@@ -1,27 +1,26 @@
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import axios from 'axios';
-import { Search } from '../components/search';
 
 const Login = ({ setLoggedIn }) => {
-  const [username, setUsername] = useState('');
+  const [codigo, setCodigo] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate =useNavigate();
-  
+  const navigate = useNavigate();
+
   const handleLogin = async(e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/auth/login', { username, password });
-
-      if (response.data.success) {
-          setLoggedIn(true);
-          navigate('/factura');
-      } else {
-          setError('Los datos ingresados son incorrectos');
-      }
+      const response = await axios.post('http://localhost:3001/auth/login', { codigo, password });
+      
+      // Guardar el token en localStorage o en el estado
+      localStorage.setItem('token', response.data.token);
+      
+      setLoggedIn(response.data.sucess,response.data.user);
+      // Redirigir a la página de inicio o dashboard
+      navigate('/dashboard');
   } catch (error) {
-      setError('Error en el servidor jsx');
+    setError(error.response?.data.message || 'Error en el inicio de sesión');
   }
   };
 
@@ -30,16 +29,16 @@ const Login = ({ setLoggedIn }) => {
       
       <form onSubmit={handleLogin}>
         
-      {error && <p style={{ color: 'red' }}>{error}</p>}
         <h2>Login</h2>
         <div>
           <label>Usuario:</label>
           <input 
             type="text" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
-            placeholder="Usuario" 
-          />
+            value={codigo} 
+            onChange={(e) => setCodigo(e.target.value)} 
+            placeholder="Codigo" 
+            required
+            />
         </div>
         <div>
           <label>Contraseña:</label>
@@ -48,9 +47,11 @@ const Login = ({ setLoggedIn }) => {
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             placeholder="Contraseña" 
-          />
+            required
+            />
         </div>
         <button type="submit">Iniciar Sesión</button>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
       </form>
     </div>
   );
