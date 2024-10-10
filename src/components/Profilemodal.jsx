@@ -7,42 +7,45 @@ import '../styles/ProfileModal.css';
 const ProfileModal = ({ onClose,userRole }) => {
     const [activeSection, setActiveSection] = useState('Usuario');
     const [selectedUser, setSelectedUser] = useState(null);
-    const [users, setUsers] = useState([]);
+    const [selectedRole, setSelectedRole] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [IsRoleModalOpen, setIsRoleModalOpen] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [roles, setRoles] = useState([]);
     
     
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchUsersAndRoles = async () => {
             const codigo = JSON.parse(localStorage.getItem('user')).codigo;
             const userRole = JSON.parse(localStorage.getItem('user')).ide_rol;
+
             try {
-            // Obtenemos el usuario actual
-            const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, {
-                params: { codigo } // Usar params para pasar código
-            });
-            const currentUser = userResponse.data;
-            // Agregar el usuario actual a la lista
-            setUsers([currentUser]);
-            
-            // Verificar si el usuario es administrador
-                const response = await axios.get('http://localhost:3001/user/usuarios', {
-                    params: { codigo,userRole } // Usar params para pasar código
-                    
+                // Obtener el usuario actual
+                const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, {
+                    params: { codigo }
                 });
-                
-                if (response.data.length > 0) { // Si hay usuarios
-                    setUsers(prevUsers => [...prevUsers, ...response.data]); // Agregar usuarios a la lista
+                const currentUser = userResponse.data;
+                setUsers([currentUser]);
+
+                // Obtener usuarios
+                const response = await axios.get('http://localhost:3001/user/usuarios', {
+                    params: { codigo, userRole }
+                });
+                if (response.data.length > 0) {
+                    setUsers(prevUsers => [...prevUsers, ...response.data]);
                 }
-            
-            
-    } catch (error) {
-        console.error('Error al cargar los usuarios:', error);
-        
-    }
-};
-fetchUsers();
-    }, [userRole]); 
+
+                // Obtener roles
+                const rolesResponse = await axios.get('http://localhost:3001/user/roles');
+                setRoles(rolesResponse.data);
+            } catch (error) {
+                console.error('Error al cargar los usuarios o roles:', error);
+            }
+        };
+        fetchUsersAndRoles();
+    }, [userRole]);
+
     
     const handleUpdate = async () => {
         const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, {
@@ -81,6 +84,14 @@ fetchUsers();
         }
     };
 
+    const handleRoleModify = (role) => {
+        setSelectedRole(role);
+        setIsRoleModalOpen(true);
+    };
+
+    const handleAddRole = () => {
+        // Lógica para agregar un nuevo rol
+    };
 
     return (
         <div className="modal-background">
@@ -119,8 +130,21 @@ fetchUsers();
                                 <button className='delete-btn' onClick={handleDelete} disabled={!selectedUser}>Eliminar</button>
                             </div>
                         </>
+                        
                     )}
-                    {activeSection === 'Roles' && <h2>Gestión de roles</h2>}
+                    {activeSection === 'Roles' && (
+                        <>
+                            <h2>Gestión de Roles</h2>
+                            <button onClick={handleAddRole}>Agregar Rol</button>
+                            <div className="role-cards">
+                                {roles.map((role) => (
+                                    <div key={role.id} className="role-card" onClick={() => handleRoleModify(role)}>
+                                        <p>Rol: {role.nombre}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
             {isEditModalOpen && (
