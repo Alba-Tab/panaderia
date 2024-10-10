@@ -1,7 +1,7 @@
 import React, { useEffect,useState } from 'react';
 import axios from 'axios';
 
-const EditUserModal = ({ user, onClose, onUpdate }) => {
+export const EditUserModal = ({ user, onClose, onUpdate }) => {
     const [nombre, setNombre] = useState(user.nombre);
     const [contrasena, setContrasena] = useState(user.contrasena);
     const [telefono, setTelefono] = useState(user.telefono);
@@ -83,5 +83,3 @@ const EditUserModal = ({ user, onClose, onUpdate }) => {
         </div>
     );
 };
-
-export default EditUserModal;

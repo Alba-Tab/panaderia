@@ -1,6 +1,7 @@
 import React, { useState, useEffect  } from 'react';
-import Sidebar from '../components/Sidebar';
 import ProfileModal from '../components/Profilemodal';
+import Sidebar from '../components/Sidebar';
+import Categorias from './Categorias';
 import '../styles/MainLayout.css'; 
 
 const MainLayout = () => {
@@ -31,7 +32,7 @@ const MainLayout = () => {
                         Perfil
                     </button>
                 </header>
-                <h2>Proximamente, Facturacion</h2>
+                <Categorias/>
             </div>
             {isProfileOpen && <ProfileModal onClose={handleProfileClick} userRole={userRole} />}
         </div>

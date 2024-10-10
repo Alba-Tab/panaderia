@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import EditUserModal from '../components/EditUserModal';
+// Importar funciones del servicio de usuarios
+import { fetchCurrentUser, fetchUsers, deleteUser } from '../services/userService'; 
+// Importar funciones del servicio de roles
+import { fetchRoles, addRole } from '../services/roleService'; 
+
+import {EditUserModal} from './EditUserModal';
 import { AddUserModal } from './AddUserModal';
+import { AddRoleModal } from './AddRoleModal';
+import { EditRoleModal } from './EditRoleModal';
 import '../styles/ProfileModal.css';
 
 const ProfileModal = ({ onClose,userRole }) => {
@@ -10,7 +16,9 @@ const ProfileModal = ({ onClose,userRole }) => {
     const [selectedRole, setSelectedRole] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [IsRoleModalOpen, setIsRoleModalOpen] = useState(false);
+    const [isRoleEditModalOpen, setIsRoleEditModalOpen] = useState(false);
+    // Para abrir modal de roles
+    const [isRoleAddModalOpen, setIsRoleAddModalOpen] = useState(false); 
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
     
@@ -21,24 +29,16 @@ const ProfileModal = ({ onClose,userRole }) => {
             const userRole = JSON.parse(localStorage.getItem('user')).ide_rol;
 
             try {
-                // Obtener el usuario actual
-                const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, {
-                    params: { codigo }
-                });
-                const currentUser = userResponse.data;
+                const currentUser = await fetchCurrentUser(codigo);
                 setUsers([currentUser]);
 
-                // Obtener usuarios
-                const response = await axios.get('http://localhost:3001/user/usuarios', {
-                    params: { codigo, userRole }
-                });
-                if (response.data.length > 0) {
-                    setUsers(prevUsers => [...prevUsers, ...response.data]);
+                const usersData = await fetchUsers(codigo, userRole);
+                if (usersData.length > 0) {
+                    setUsers(prevUsers => [...prevUsers, ...usersData]);
                 }
 
-                // Obtener roles
-                const rolesResponse = await axios.get('http://localhost:3001/user/roles');
-                setRoles(rolesResponse.data);
+                const rolesData = await fetchRoles();
+                setRoles(rolesData);
             } catch (error) {
                 console.error('Error al cargar los usuarios o roles:', error);
             }
@@ -48,23 +48,24 @@ const ProfileModal = ({ onClose,userRole }) => {
 
     
     const handleUpdate = async () => {
-        const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, {
-            params: { codigo: JSON.parse(localStorage.getItem('user')).codigo }
-        });
-        const currentUser = userResponse.data;
+        const codigo = JSON.parse(localStorage.getItem('user')).codigo;
+        const userRole = JSON.parse(localStorage.getItem('user')).ide_rol;
+
+        const currentUser = await fetchCurrentUser(codigo);
         setUsers([currentUser]);
-        const response = await axios.get('http://localhost:3001/user/usuarios', {
-            params: {  codigo: JSON.parse(localStorage.getItem('user')).codigo ,userRole }
-        });
-        if (response.data.length > 0) {
-            setUsers(prevUsers => [...prevUsers, ...response.data]);
+
+        const usersData = await fetchUsers(codigo, userRole);
+        if (usersData.length > 0) {
+            setUsers(prevUsers => [...prevUsers, ...usersData]);
         }
+
+        const rolesdata = await fetchRoles();
+        setRoles(rolesdata);
     };
     
     const handleModify = () => {
         if (selectedUser) {
-          //  const userToEdit = users.find(user => user.codigo === selectedUser);
-            setIsEditModalOpen(true);
+           setIsEditModalOpen(true);
         }
     };
     
@@ -72,25 +73,22 @@ const ProfileModal = ({ onClose,userRole }) => {
         if (selectedUser) {
             try {
                 const userRole = JSON.parse(localStorage.getItem('user')).ide_rol;
-                await axios.delete(`http://localhost:3001/user/usuarios/${selectedUser}`,
-                    {
-                        params: { userRole } // Usar params para pasar código
-                        
-                    });
-                setUsers(users.filter(user => user.codigo !== selectedUser)); // Actualizar la lista
+                await deleteUser(selectedUser, userRole);
+                // Actualizar la lista
+                setUsers(users.filter(user => user.codigo !== selectedUser)); 
             } catch (error) {
                 console.error('Error al eliminar el usuario:', error);
             }
         }
     };
-
+    // Funciones de gestión de roles
     const handleRoleModify = (role) => {
         setSelectedRole(role);
-        setIsRoleModalOpen(true);
+         // Abrir modal de edición de rol
     };
 
     const handleAddRole = () => {
-        // Lógica para agregar un nuevo rol
+        setIsRoleAddModalOpen(true); // Abrir modal de agregar rol
     };
 
     return (
@@ -134,15 +132,26 @@ const ProfileModal = ({ onClose,userRole }) => {
                     )}
                     {activeSection === 'Roles' && (
                         <>
-                            <h2>Gestión de Roles</h2>
-                            <button onClick={handleAddRole}>Agregar Rol</button>
+                             <h2>Gestión de Roles</h2>
+                                
                             <div className="role-cards">
+                             <div className="user-card add-user-card" onClick={() => handleAddRole()}>
+                                        <p>+</p> {/* Símbolo de más */}
+                                        <p>Agregar Rol</p>
+                                    </div>
                                 {roles.map((role) => (
-                                    <div key={role.id} className="role-card" onClick={() => handleRoleModify(role)}>
+                                    <div key={role.ide} 
+                                    className={`role-card ${selectedUser === role.ide ? 'selected' : ''}`} 
+                                    onClick={() => setSelectedRole(role.ide)}>
+
                                         <p>Rol: {role.nombre}</p>
+                                        <p>Descripcion: {role.descripcion}</p>
                                     </div>
                                 ))}
                             </div>
+                                <button className='modify-btn' onClick={handleRoleModify}>Modificar Rol</button>
+                                <button className='delete-btn' onClick={handleAddRole}>Eliminar Rol</button>
+
                         </>
                     )}
                 </div>
@@ -158,6 +167,20 @@ const ProfileModal = ({ onClose,userRole }) => {
             {isAddModalOpen && ( // Modal para agregar un nuevo usuario
                 <AddUserModal
                     onClose={() => setIsAddModalOpen(false)}
+                    onUpdate={handleUpdate}
+                />
+            )}
+                        {isRoleEditModalOpen && (
+                <EditRoleModal
+                    role={selectedRole}
+                    onClose={() => setIsRoleEditModalOpen(false)}
+                    onUpdate={handleUpdate}
+                />
+            )}
+
+            {isRoleAddModalOpen && (
+                <AddRoleModal
+                    onClose={() => setIsRoleAddModalOpen(false)}
                     onUpdate={handleUpdate}
                 />
             )}

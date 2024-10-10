@@ -51,13 +51,13 @@
 }
 
 /* Tarjetas de usuario */
-.user-cards {
+.user-cards, .role-cards {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
 }
 
-.user-card {
+.user-card, .role-card, .add-user-card  {
     background-color: #e7e7e7;
     padding: 15px;
     border-radius: 8px;
@@ -67,9 +67,14 @@
     cursor: pointer;
 }
 
-.user-card:hover {
+.user-card:hover, .role-card:hover, .add-user-card:hover {
     transform: scale(1.05); /* Efecto al pasar el cursor por encima */
 }
+
+.selected {
+    border-color: #007bff;
+}
+
 .user-card.selected {
     background-color: #d4f0fc;
     border: 2px solid #00aaff;
@@ -117,4 +122,16 @@ button.modify-btn {
 button.delete-btn {
     background-color: #F44336;
     color: white;
+}
+
+.modify-btn:hover, .delete-btn:hover {
+    background-color: #0056b3;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
 }

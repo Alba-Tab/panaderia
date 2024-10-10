@@ -9,8 +9,8 @@ export const AddUserModal = ({ onClose, onUpdate }) => {
     const [sexo, setsexo] = useState('');
     const [telefono, setTelefono] = useState('');
     const [rol, setRol] = useState('US01');
-    const [roles, setRoles] = useState([]); // Para almacenar los roles disponibles
-    const [error, setError] = useState(''); // Para manejar errores
+    const [roles, setRoles] = useState([]);  
+    const [error, setError] = useState('');  
     
     useEffect(() => {
         const fetchRoles = async () => {

@@ -5,6 +5,7 @@ const authRoutes = require('./routes/auth');
 const facturaRoutes = require('./routes/factura');
 const userRoutes = require('./routes/user');
 const roleRoutes = require('./routes/roles');
+const catRoutes = require('./routes/categories');
 const pool = require('./db');
 
 const app = express();
@@ -15,12 +16,14 @@ app.use(express.json());
 
 // Rutas de autenticación
 app.use('/auth', authRoutes);
-// Rutas de factura
-app.use('/factura', facturaRoutes);
 // Rutas de usuarios
 app.use('/user', userRoutes);
 // Rutas de roles
 app.use('/roles', roleRoutes);
+// Rutas de Categorias
+app.use('/categories', catRoutes);
+// Rutas de factura
+app.use('/factura', facturaRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto: ${PORT}`);
