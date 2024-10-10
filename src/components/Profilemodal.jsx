@@ -9,13 +9,13 @@ const ProfileModal = ({ onClose,userRole }) => {
     const [users, setUsers] = useState([]);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     
-
+    
+    
     useEffect(() => {
         const fetchUsers = async () => {
-        try {
             const codigo = JSON.parse(localStorage.getItem('user')).codigo;
             const userRole = JSON.parse(localStorage.getItem('user')).ide_rol;
-            
+            try {
             // Obtenemos el usuario actual
             const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, {
                 params: { codigo } // Usar params para pasar código
@@ -29,7 +29,7 @@ const ProfileModal = ({ onClose,userRole }) => {
                     params: { codigo,userRole } // Usar params para pasar código
                     
                 });
-                console.log(currentUser);
+                
                 if (response.data.length > 0) { // Si hay usuarios
                     setUsers(prevUsers => [...prevUsers, ...response.data]); // Agregar usuarios a la lista
                 }
@@ -37,22 +37,12 @@ const ProfileModal = ({ onClose,userRole }) => {
             
     } catch (error) {
         console.error('Error al cargar los usuarios:', error);
-        setError('Error al cargar los usuarios');
         
     }
 };
 fetchUsers();
-    }, [userRole]);
-
-
-    const handleModify = () => {
-        if (selectedUser) {
-            const userToEdit = users.find(user => user.codigo === selectedUser);
-            setIsEditModalOpen(true);
-        }
-    };
-
-
+    }, [userRole]); 
+    
     const handleUpdate = async () => {
         const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, {
             params: { codigo: JSON.parse(localStorage.getItem('user')).codigo }
@@ -66,12 +56,23 @@ fetchUsers();
             setUsers(prevUsers => [...prevUsers, ...response.data]);
         }
     };
-
-
+    
+    const handleModify = () => {
+        if (selectedUser) {
+          //  const userToEdit = users.find(user => user.codigo === selectedUser);
+            setIsEditModalOpen(true);
+        }
+    };
+    
     const handleDelete = async () => {
         if (selectedUser) {
             try {
-                await axios.delete(`http://localhost:3001/user/usuarios/${selectedUser}`);
+                const userRole = JSON.parse(localStorage.getItem('user')).ide_rol;
+                await axios.delete(`http://localhost:3001/user/usuarios/${selectedUser}`,
+                    {
+                        params: { userRole } // Usar params para pasar código
+                        
+                    });
                 setUsers(users.filter(user => user.codigo !== selectedUser)); // Actualizar la lista
             } catch (error) {
                 console.error('Error al eliminar el usuario:', error);

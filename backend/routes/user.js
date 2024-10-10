@@ -3,25 +3,25 @@ const pool = require('../db');
 const router = express.Router();
 
 // Middleware para verificar el rol de administrador
-const isAdmin = (req, res, next) => {
-    const userRole = req.query.userRole; // Obtener userRole de los parámetros de la consulta
-    // Verificar si el usuario es administrador
-    if (userRole !== 'RL01') {
-        return res.status(403).json({ message: 'No tienes permiso para ver esta información.' });
-    }
-    next();
-};
 
 
 // Ruta para obtener todos los usuarios (solo para administradores)
-router.get('/usuarios', isAdmin, async (req, res) => {
-    const { codigo, userRole } = req.query; // Cambiar a req.query
+router.get('/usuarios', async (req, res) => {
+    const { codigo, userRole } = req.query;
+
     try {
-        const result = await pool.query('SELECT * FROM usuario WHERE codigo != $1', [codigo]);
+        // Aquí podrías querer validar que el rol del usuario sea 'RL01'
+        if (userRole !== 'RL01') {
+            return res.status(403).json({ message: 'No tienes permiso para ver esta información.' });
+        }
+
+        // Suponiendo que estás usando una consulta SQL para obtener los usuarios
+        const query = 'SELECT * FROM usuario WHERE codigo != $1'; // Cambia esto según tus necesidades
+        const result = await pool.query(query, [codigo]);
         res.json(result.rows);
     } catch (error) {
-        console.error('Error al obtener usuarios:', error);
-        res.status(500).json({ message: 'Error al obtener usuarios' });
+        console.error('Error al cargar los usuarios:', error);
+        res.status(500).json({ message: 'Error al cargar los usuarios' });
     }
 });
 
@@ -44,6 +44,7 @@ router.put('/usuarios/:codigo', async (req, res) => {
     const { nombre,contrasena, telefono,rol } = req.body; // Nuevos valores
 
     try {
+        
         const result = await pool.query(
             'UPDATE usuario SET nombre = $1, contrasena= $2, telefono = $3, ide_rol=$4 WHERE codigo = $5',
             [nombre,contrasena, telefono,rol, codigo]
@@ -56,10 +57,14 @@ router.put('/usuarios/:codigo', async (req, res) => {
 });
 
 // Ruta para eliminar un usuario
-router.delete('/usuarios/:codigo', isAdmin, async (req, res) => {
+router.delete('/usuarios/:codigo', async (req, res) => {
     const { codigo } = req.params; // Código del usuario a eliminar
+    const userRole = req.query.userRole; // Obtener userRole de los parámetros de la consulta
 
-    try {
+    try {        
+        if (userRole !== 'RL01') {
+        return res.status(403).json({ message: 'No tienes permiso para ver esta información.' });
+    }
         const result = await pool.query('DELETE FROM usuario WHERE codigo = $1', [codigo]);
         res.status(204).send(); // No devuelve nada
     } catch (error) {
