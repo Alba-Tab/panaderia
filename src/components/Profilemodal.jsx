@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EditUserModal from '../components/EditUserModal';
+import { AddUserModal } from './AddUserModal';
 import '../styles/ProfileModal.css';
 
 const ProfileModal = ({ onClose,userRole }) => {
@@ -8,7 +9,7 @@ const ProfileModal = ({ onClose,userRole }) => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [users, setUsers] = useState([]);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     
     
     useEffect(() => {
@@ -93,7 +94,15 @@ fetchUsers();
                     {activeSection === 'Usuario' && (
                         <>
                             <h2>Gestión de usuario</h2>
+                            
                             <div className="user-cards">
+                            {userRole === 'RL01' && ( 
+                                // Solo mostrar la tarjeta "Agregar usuario" si es admin
+                                    <div className="user-card add-user-card" onClick={() => setIsAddModalOpen(true)}>
+                                        <p>+</p> {/* Símbolo de más */}
+                                        <p>Agregar Usuario</p>
+                                    </div>
+                                )}
                                 {users.map((user) => (
                                     <div
                                         key={user.codigo}
@@ -118,6 +127,13 @@ fetchUsers();
                 <EditUserModal
                     user={users.find(user => user.codigo === selectedUser)}
                     onClose={() => setIsEditModalOpen(false)}
+                    onUpdate={handleUpdate}
+                />
+            )}
+
+            {isAddModalOpen && ( // Modal para agregar un nuevo usuario
+                <AddUserModal
+                    onClose={() => setIsAddModalOpen(false)}
                     onUpdate={handleUpdate}
                 />
             )}
