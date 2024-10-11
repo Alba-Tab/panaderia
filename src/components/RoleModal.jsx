@@ -7,23 +7,19 @@ const RoleModal = ({ role, onClose, onUpdate }) => {
 
     useEffect(() => {
         const fetchPermisos = async () => {
-            try{
-                const permisosData = await roleService.getPermisosByRoleId(role.id);
-                setPermisos(permisosData);
-            } catch (error) {
-                console.error('Error al cargar los permisos:', error);
-            }
+            const response = await axios.get(`http://localhost:3001/user/roles/${role.id}/permisos`);
+            setPermisos(response.data);
         };
         fetchPermisos();
     }, [role]);
 
     const handleSave = async () => {
         try {
-            await roleService.updateRole(role.id, nombre, permisos);
-            onUpdate(); // Refresca la lista de roles
-            onClose(); // Cierra el modal
+            await axios.put(`http://localhost:3001/user/roles/${role.id}`, { nombre, permisos });
+            onUpdate(); // Llamar a onUpdate para refrescar la lista de roles
+            onClose(); // Cerrar el modal
         } catch (error) {
-            console.error('Error al guardar el rol:', error);
+            console.error('Error al actualizar el rol:', error);
         }
     };
 

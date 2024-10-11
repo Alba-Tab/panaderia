@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { login } from '../services/authService';
+import axios from 'axios';
 
 const Login = ({ setLoggedIn }) => {
   const [codigo, setCodigo] = useState('');
@@ -11,12 +11,12 @@ const Login = ({ setLoggedIn }) => {
   const handleLogin = async(e) => {
     e.preventDefault();
     try {
-      const response = await await login(codigo, password);
+      const response = await axios.post('http://localhost:3001/auth/login', { codigo, password });
       
       // Guardar el token en localStorage o en el estado
-      localStorage.setItem('token', response.token);
+      localStorage.setItem('token', response.data.token);
       
-      setLoggedIn(response.sucess,response.user);
+      setLoggedIn(response.data.sucess,response.data.user);
       // Redirigir a la página de inicio o dashboard
       navigate('/dashboard');
   } catch (error) {

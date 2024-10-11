@@ -68,7 +68,16 @@ router.get('/usuarios/lastCode', async (req, res) => {
 });
 
 
-
+// Ruta para obtener todos los roles
+router.get('/roles', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM roles'); // Ajusta la consulta según tu base de datos
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error al obtener roles:', error);
+        res.status(500).json({ message: 'Error al obtener roles' });
+    }
+});
 
 // Ruta para agregar un usuario
 router.post('/add', async (req, res) => {
