@@ -12,7 +12,7 @@ const Sidebar = () => {
                     <Link to="/facturas">Facturas</Link>
                 </li>
                 <li>
-                    <Link to="/catgorias">Categorias</Link>
+                    <Link to="/categorias">Categorias</Link>
                 </li>
                 <li>
                     <Link to="/insumos">Insumos</Link>

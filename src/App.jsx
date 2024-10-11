@@ -38,7 +38,7 @@ const App = () => {
               <MainLayout />
             </PrivateRoute>
           } />
-          <Route path="/categories" element={
+          <Route path="/categorias" element={
             <PrivateRoute>
               <Categories />
             </PrivateRoute>
