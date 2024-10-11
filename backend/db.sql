@@ -196,7 +196,15 @@ CREATE TABLE participa(
   	ON DELETE CASCADE
 );
 
-
+CREATE TABLE bitacora (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    metodo VARCHAR(10),
+    ruta VARCHAR(255),
+    ip VARCHAR(45),
+    usuario VARCHAR(255),
+    mensaje TEXT
+);
 
 INSERT INTO categoria (nombre, descripcion) VALUES
 ('BEBIDAS', 'BEBIDAS A BASE DE AGUA O LECHE'),
