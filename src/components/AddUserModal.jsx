@@ -71,7 +71,11 @@ export const AddUserModal = ({ onClose, onUpdate }) => {
                 <label>Contraseña:</label>
                 <input type="text" value={contrasena} onChange={(e) => setContrasena(e.target.value)} />
                 <label>Sexo:</label>
-                <input type="text" value={sexo} onChange={(e) => setsexo(e.target.value)} />
+                <select value={sexo} onChange={(e) => setsexo(e.target.value)}>
+                    <option value="">Selecciona</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                </select>
                 <label>Teléfono:</label>
                 <input type="text" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
                         <label>Rol:</label>

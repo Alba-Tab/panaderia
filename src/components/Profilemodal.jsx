@@ -2,15 +2,21 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EditUserModal from '../components/EditUserModal';
 import { AddUserModal } from './AddUserModal';
+import { AddRoleModal } from './AddRoleModal';
+import { EditRoleModal } from './editRoleModal';
 import '../styles/ProfileModal.css';
 
+
+//-------------------componente principal de gestion de rol y usuarios-------------------
 const ProfileModal = ({ onClose,userRole }) => {
     const [activeSection, setActiveSection] = useState('Usuario');
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedRole, setSelectedRole] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [IsRoleModalOpen, setIsRoleModalOpen] = useState(false);
+    //Para abrir el modal de roles
+    const [isRoleEditModalOpen, setIsRoleEditModalOpen] = useState(false);
+    const [isRoleAddModalOpen, setIsRoleAddModalOpen] = useState(false);
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
     
@@ -86,11 +92,10 @@ const ProfileModal = ({ onClose,userRole }) => {
 
     const handleRoleModify = (role) => {
         setSelectedRole(role);
-        setIsRoleModalOpen(true);
     };
 
     const handleAddRole = () => {
-        // Lógica para agregar un nuevo rol
+        setIsRoleAddModalOpen(true);
     };
 
     return (
@@ -132,17 +137,26 @@ const ProfileModal = ({ onClose,userRole }) => {
                         </>
                         
                     )}
-                    {activeSection === 'Roles' && (
+                        {activeSection === 'Roles' && (
                         <>
-                            <h2>Gestión de Roles</h2>
-                            <button onClick={handleAddRole}>Agregar Rol</button>
-                            <div className="role-cards">
+                             <h2>Gestión de Roles</h2>
+                                
+                            <div className="user-cards">
+                             <div className="user-card add-user-card" onClick={() => handleAddRole()}>
+                                        <p>+</p> {/* Símbolo de más */}
+                                        <p>Agregar Rol</p>
+                                    </div>
                                 {roles.map((role) => (
-                                    <div key={role.id} className="role-card" onClick={() => handleRoleModify(role)}>
+                                    <div key={role.ide} 
+                                    className={`user-card ${selectedRole === role.ide ? 'selected' : ''}`} 
+                                    onClick={() => setSelectedRole(role.ide)}>
                                         <p>Rol: {role.nombre}</p>
                                     </div>
                                 ))}
                             </div>
+                                <button className='modify-btn' onClick={handleRoleModify}>Modificar Rol</button>
+                                <button className='delete-btn' onClick={handleAddRole}>Eliminar Rol</button>
+
                         </>
                     )}
                 </div>
@@ -158,6 +172,20 @@ const ProfileModal = ({ onClose,userRole }) => {
             {isAddModalOpen && ( // Modal para agregar un nuevo usuario
                 <AddUserModal
                     onClose={() => setIsAddModalOpen(false)}
+                    onUpdate={handleUpdate}
+                />
+            )}
+                     {isRoleEditModalOpen && (
+                <EditRoleModal
+                    role={selectedRole}
+                    onClose={() => setIsRoleEditModalOpen(false)}
+                    onUpdate={handleUpdate}
+                />
+            )}
+
+            {isRoleAddModalOpen && (
+                <AddRoleModal
+                    onClose={() => setIsRoleAddModalOpen(false)}
                     onUpdate={handleUpdate}
                 />
             )}

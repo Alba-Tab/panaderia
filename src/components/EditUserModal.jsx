@@ -53,7 +53,7 @@ const EditUserModal = ({ user, onClose, onUpdate }) => {
      : roles.filter(role => role.ide === rol);
 
     return (
-        <div className="modal-background">
+<div className="modal-background">
             <div className="modal-content">
                 <h2>Editar Usuario</h2>
                 <label>Nombre:</label>
