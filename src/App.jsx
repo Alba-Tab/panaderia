@@ -43,6 +43,7 @@ const App = () => {
               <Categories />
             </PrivateRoute>
           } />
+          
           <Route path="*" element={<Navigate to={loggedIn ? "/dashboard" : "/"} />} />
         </Routes>
       </Router>
