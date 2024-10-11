@@ -7,7 +7,6 @@ const facturaRoutes = require('./routes/factura');
 const userRoutes = require('./routes/user');
 const roleRoutes = require('./routes/roles'); // Solo importa una vez la ruta de roles
 const permisosRoutes = require('./routes/permisos');
-const categoriesRoutes = require('./routes/categories');
 const pool = require('./db');
 
 const app = express();
@@ -27,7 +26,8 @@ app.use('/roles', roleRoutes);
 // Rutas de permisos
 app.use('/permisos', permisosRoutes);
 
-app.use('/categorias', categoriesRoutes);
+app.use('/api', require('./routes/categoria.routes'));
+app.use('/api', require('./routes/producto.routes'));
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto: ${PORT}`);
