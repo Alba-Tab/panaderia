@@ -14,22 +14,31 @@ router.post('/login', async (req, res) => {
         const result = await pool.query(userQuery, [codigo]);
         
         if (result.rows.length === 0) {
-            return res.status(404).json({success: true, message: 'Usuario no encontrado' });
+            await pool.query('INSERT INTO bitacora (metodo, ruta, ip, usuario, mensaje) VALUES ($1, $2, $3, $4, $5)', 
+                ['POST', '/login', req.ip, codigo, 'Usuario no encontrado']);
+            return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
         }
         
-            const user = result.rows[0];
+        const user = result.rows[0]; 
+    
+        // Verifica la contraseña cifrada
+        //const isMatch = await bcrypt.compare(password, user.contrasena);
+        if (password !== user.contrasena) {
+            await pool.query('INSERT INTO bitacora (metodo, ruta, ip, usuario, mensaje) VALUES ($1, $2, $3, $4, $5)', 
+                ['POST', '/login', req.ip, codigo, 'Contraseña incorrecta']);
+            return res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
+        }
 
-            // Verifica la contraseña cifrada
-            //const isMatch = await bcrypt.compare(password, user.contrasena);
-            if ((password !== user.contrasena)) {
-                return res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
-            } 
-            // Genera un token
-            const token = jwt.sign({ codigo: user.codigo, userRole: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-            res.status(200).json({ success: true, user, token });
-        
+        const token = jwt.sign({ codigo: user.codigo, userRole: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        console.log('Inserting into bitacora:', 'POST', '/login', req.ip, codigo, 'Usuario no encontrado');    
+        await pool.query('INSERT INTO bitacora (metodo, ruta, ip, usuario, mensaje) VALUES ($1, $2, $3, $4, $5)', 
+            ['POST', '/login', req.ip, codigo, 'Login exitoso']);
+        res.status(200).json({ success: true, user, token });
     } catch (error) {
         console.error(error);
+        await pool.query('INSERT INTO bitacora (metodo, ruta, ip, usuario, mensaje) VALUES ($1, $2, $3, $4, $5)', 
+            ['POST', '/login', req.ip, codigo, 'Error en el servidor']);
         return res.status(500).json({ success: false, message: 'Error en el servidor' });
     }
 });
