@@ -1,10 +1,12 @@
 require('dotenv').config({ path: './.env' });
 const express = require('express');
 const cors = require('cors');
+
 const authRoutes = require('./routes/auth');
 const facturaRoutes = require('./routes/factura');
 const userRoutes = require('./routes/user');
-const roleRoutes = require('./routes/roles');
+const roleRoutes = require('./routes/roles'); // Solo importa una vez la ruta de roles
+const permisosRoutes = require('./routes/permisos');
 const pool = require('./db');
 
 const app = express();
@@ -19,8 +21,10 @@ app.use('/auth', authRoutes);
 app.use('/factura', facturaRoutes);
 // Rutas de usuarios
 app.use('/user', userRoutes);
-// Rutas de roles
+// Rutas de roles (solo una vez)
 app.use('/roles', roleRoutes);
+// Rutas de permisos
+app.use('/permisos', permisosRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto: ${PORT}`);
