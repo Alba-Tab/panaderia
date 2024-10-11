@@ -29,7 +29,10 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
         }
 
-        const token = jwt.sign({ codigo: user.codigo, userRole: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ 
+            codigo: user.codigo, 
+            userRole: user.role 
+        }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         console.log('Inserting into bitacora:', 'POST', '/login', req.ip, codigo, 'Usuario no encontrado');    
         await pool.query('INSERT INTO bitacora (metodo, ruta, ip, usuario, mensaje) VALUES ($1, $2, $3, $4, $5)', 
@@ -42,5 +45,20 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ success: false, message: 'Error en el servidor' });
     }
 });
+
+//logout
+router.post('/logout', async (req, res) => {
+    try {
+        await pool.query('INSERT INTO bitacora (metodo, ruta, ip, usuario, mensaje) VALUES ($1, $2, $3, $4, $5)', 
+            ['POST', '/logout', req.ip, req.body.codigo, 'Logout exitoso']);
+        res.status(200).json({ success: true, message: 'Logout exitoso' });
+    } catch (error) {
+        console.error(error);
+        await pool.query('INSERT INTO bitacora (metodo, ruta, ip, usuario, mensaje) VALUES ($1, $2, $3, $4, $5)', 
+            ['POST', '/logout', req.ip, req.body.codigo, 'Error en el servidor']);
+        return res.status(500).json({ success: false, message: 'Error en el servidor' });
+    }
+});
+
 
 module.exports = router;
