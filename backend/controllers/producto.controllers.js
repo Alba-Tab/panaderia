@@ -44,6 +44,17 @@ const updateProducto = async (req, res) => {
     }
 }
 
+const deleteProducto = async (req, res) => {
+    try{
+        const { id } = req.params;
+        await pool.query('DELETE FROM producto WHERE ide = $1', [id]);
+        res.json({ message: 'Producto eliminado exitosamente' });
+    }catch(error){
+        console.error('Error al eliminar el producto:', error);
+        res.status(500).json({ message: 'Error al eliminar el producto' });
+    }
+}
+
 module.exports = {
     getProductos,
     getProducto,
