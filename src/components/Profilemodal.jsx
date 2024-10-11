@@ -6,35 +6,30 @@ import { AddRoleModal } from './AddRoleModal';
 import { EditRoleModal } from './editRoleModal';
 import '../styles/ProfileModal.css';
 
-
-//-------------------componente principal de gestion de rol y usuarios-------------------
-const ProfileModal = ({ onClose,userRole }) => {
+//------------------- Componente principal de gestión de rol y usuarios -------------------
+const ProfileModal = ({ onClose, userRole }) => {
     const [activeSection, setActiveSection] = useState('Usuario');
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedRole, setSelectedRole] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    //Para abrir el modal de roles
     const [isRoleEditModalOpen, setIsRoleEditModalOpen] = useState(false);
     const [isRoleAddModalOpen, setIsRoleAddModalOpen] = useState(false);
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
-    
-    
+
     useEffect(() => {
         const fetchUsersAndRoles = async () => {
             const codigo = JSON.parse(localStorage.getItem('user')).codigo;
             const userRole = JSON.parse(localStorage.getItem('user')).ide_rol;
 
             try {
-                // Obtener el usuario actual
                 const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, {
                     params: { codigo }
                 });
                 const currentUser = userResponse.data;
                 setUsers([currentUser]);
 
-                // Obtener usuarios
                 const response = await axios.get('http://localhost:3001/user/usuarios', {
                     params: { codigo, userRole }
                 });
@@ -42,7 +37,6 @@ const ProfileModal = ({ onClose,userRole }) => {
                     setUsers(prevUsers => [...prevUsers, ...response.data]);
                 }
 
-                // Obtener roles
                 const rolesResponse = await axios.get('http://localhost:3001/user/roles');
                 setRoles(rolesResponse.data);
             } catch (error) {
@@ -52,37 +46,32 @@ const ProfileModal = ({ onClose,userRole }) => {
         fetchUsersAndRoles();
     }, [userRole]);
 
-    
     const handleUpdate = async () => {
-        const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, {
-            params: { codigo: JSON.parse(localStorage.getItem('user')).codigo }
-        });
+        // Actualiza la lista de usuarios
+        const codigo = JSON.parse(localStorage.getItem('user')).codigo;
+        const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, { params: { codigo } });
         const currentUser = userResponse.data;
         setUsers([currentUser]);
+
         const response = await axios.get('http://localhost:3001/user/usuarios', {
-            params: {  codigo: JSON.parse(localStorage.getItem('user')).codigo ,userRole }
+            params: { codigo, userRole }
         });
         if (response.data.length > 0) {
             setUsers(prevUsers => [...prevUsers, ...response.data]);
         }
     };
-    
+
     const handleModify = () => {
         if (selectedUser) {
-          //  const userToEdit = users.find(user => user.codigo === selectedUser);
             setIsEditModalOpen(true);
         }
     };
-    
+
     const handleDelete = async () => {
         if (selectedUser) {
             try {
                 const userRole = JSON.parse(localStorage.getItem('user')).ide_rol;
-                await axios.delete(`http://localhost:3001/user/usuarios/${selectedUser}`,
-                    {
-                        params: { userRole } // Usar params para pasar código
-                        
-                    });
+                await axios.delete(`http://localhost:3001/user/usuarios/${selectedUser}`, { params: { userRole } });
                 setUsers(users.filter(user => user.codigo !== selectedUser)); // Actualizar la lista
             } catch (error) {
                 console.error('Error al eliminar el usuario:', error);
@@ -90,8 +79,21 @@ const ProfileModal = ({ onClose,userRole }) => {
         }
     };
 
-    const handleRoleModify = (role) => {
-        setSelectedRole(role);
+    const handleRoleModify = () => {
+        if (selectedRole) {
+            setIsRoleEditModalOpen(true);
+        }
+    };
+
+    const handleDeleteRole = async () => {
+        if (selectedRole) {
+            try {
+                await axios.delete(`http://localhost:3001/user/roles/${selectedRole}`);
+                setRoles(roles.filter(role => role.ide !== selectedRole)); // Actualizar la lista de roles
+            } catch (error) {
+                console.error('Error al eliminar el rol:', error);
+            }
+        }
     };
 
     const handleAddRole = () => {
@@ -110,10 +112,8 @@ const ProfileModal = ({ onClose,userRole }) => {
                     {activeSection === 'Usuario' && (
                         <>
                             <h2>Gestión de usuario</h2>
-                            
                             <div className="user-cards">
-                            {userRole === 'RL01' && ( 
-                                // Solo mostrar la tarjeta "Agregar usuario" si es admin
+                                {userRole === 'RL01' && (
                                     <div className="user-card add-user-card" onClick={() => setIsAddModalOpen(true)}>
                                         <p>+</p> {/* Símbolo de más */}
                                         <p>Agregar Usuario</p>
@@ -135,32 +135,30 @@ const ProfileModal = ({ onClose,userRole }) => {
                                 <button className='delete-btn' onClick={handleDelete} disabled={!selectedUser}>Eliminar</button>
                             </div>
                         </>
-                        
                     )}
-                        {activeSection === 'Roles' && (
+                    {activeSection === 'Roles' && (
                         <>
-                             <h2>Gestión de Roles</h2>
-                                
+                            <h2>Gestión de Roles</h2>
                             <div className="user-cards">
-                             <div className="user-card add-user-card" onClick={() => handleAddRole()}>
-                                        <p>+</p> {/* Símbolo de más */}
-                                        <p>Agregar Rol</p>
-                                    </div>
+                                <div className="user-card add-user-card" onClick={handleAddRole}>
+                                    <p>+</p> {/* Símbolo de más */}
+                                    <p>Agregar Rol</p>
+                                </div>
                                 {roles.map((role) => (
-                                    <div key={role.ide} 
-                                    className={`user-card ${selectedRole === role.ide ? 'selected' : ''}`} 
-                                    onClick={() => setSelectedRole(role.ide)}>
+                                    <div key={role.ide}
+                                        className={`user-card ${selectedRole === role.ide ? 'selected' : ''}`}
+                                        onClick={() => setSelectedRole(role.ide)}>
                                         <p>Rol: {role.nombre}</p>
                                     </div>
                                 ))}
                             </div>
-                                <button className='modify-btn' onClick={handleRoleModify}>Modificar Rol</button>
-                                <button className='delete-btn' onClick={handleAddRole}>Eliminar Rol</button>
-
+                            <button className='modify-btn' onClick={handleRoleModify} disabled={!selectedRole}>Modificar Rol</button>
+                            <button className='delete-btn' onClick={handleDeleteRole} disabled={!selectedRole}>Eliminar Rol</button>
                         </>
                     )}
                 </div>
             </div>
+
             {isEditModalOpen && (
                 <EditUserModal
                     user={users.find(user => user.codigo === selectedUser)}
@@ -168,21 +166,19 @@ const ProfileModal = ({ onClose,userRole }) => {
                     onUpdate={handleUpdate}
                 />
             )}
-
-            {isAddModalOpen && ( // Modal para agregar un nuevo usuario
+            {isAddModalOpen && (
                 <AddUserModal
                     onClose={() => setIsAddModalOpen(false)}
                     onUpdate={handleUpdate}
                 />
             )}
-                     {isRoleEditModalOpen && (
+            {isRoleEditModalOpen && (
                 <EditRoleModal
-                    role={selectedRole}
+                    role={roles.find(role => role.ide === selectedRole)} // Asegúrate de pasar el objeto correcto
                     onClose={() => setIsRoleEditModalOpen(false)}
                     onUpdate={handleUpdate}
                 />
             )}
-
             {isRoleAddModalOpen && (
                 <AddRoleModal
                     onClose={() => setIsRoleAddModalOpen(false)}
