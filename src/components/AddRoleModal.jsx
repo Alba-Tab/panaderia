@@ -34,7 +34,7 @@ export const AddRoleModal = ({onClose,onUpdate}) => {
     e.preventDefault();
     setError(''); 
     try {
-        const response = await axios.post('http://localhost:3001/roles', {
+        const response = await axios.post('http://localhost:3001/roles/roles', {
             ide,
             nombre,
             permisos: selectedPermisos
@@ -57,42 +57,42 @@ export const AddRoleModal = ({onClose,onUpdate}) => {
 };
 
 return (
-<div className="modal-background">
-            <div className="modal-content">
-                <h2>Agregar Rol</h2>
-                {error && <p className="error-message">{error}</p>}
-                <label>IDE:</label>
-                <input
-                    type="text"
-                    value={ide}
-                    onChange={(e) => setIde(e.target.value)}
-                    placeholder="Código del Rol"
-                />
-                <label>Nombre:</label>
-                <input
-                    type="text"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
-                    placeholder="Nombre del Rol"
-                />
-                
-                <h3>Permisos</h3>
-                <div className="permissions-list">
-                    {permisos.map((permiso) => (
-                        <label key={permiso.ide}>
-                            <input
-                                type="checkbox"
-                                checked={selectedPermisos.includes(permiso.ide)}
-                                onChange={() => handlePermisoChange(permiso.ide)}
-                            />
-                            {permiso.nombre} - {permiso.descripcion}
-                        </label>
-                    ))}
-                </div>
+  <div className="modal-background">
+      <div className="modal-content">
+          <h2>Agregar Rol</h2>
+          {error && <p className="error-message">{error}</p>}
+          <label>IDE:</label>
+          <input
+              type="text"
+              value={ide}
+              onChange={(e) => setIde(e.target.value)}
+              placeholder="Código del Rol"
+          />
+          <label>Nombre:</label>
+          <input
+              type="text"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              placeholder="Nombre del Rol"
+          />
+          
+          <h3>Permisos</h3>
+          <div className="permissions-list">
+              {permisos.map((permiso) => (
+                  <label key={permiso.ide}>
+                      <input
+                          type="checkbox"
+                          checked={selectedPermisos.includes(permiso.ide)}
+                          onChange={() => handlePermisoChange(permiso.ide)}
+                      />
+                      {permiso.nombre} - {permiso.descripcion}
+                  </label>
+              ))}
+          </div>
 
-                <button onClick={handleSave}>Guardar</button>
-                <button onClick={onClose}>Cancelar</button>
-            </div>
-        </div>
-    );
+          <button onClick={handleSave}>Guardar</button>
+          <button onClick={onClose}>Cancelar</button>
+      </div>
+  </div>
+);
 };
