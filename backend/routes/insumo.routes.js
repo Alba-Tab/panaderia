@@ -6,7 +6,6 @@ const {
   updateInsumo,
   deleteInsumo,
 } = require("../controllers/insumo.controllers");
-const { route } = require("./auth");
 
 const router = express.Router();
 
