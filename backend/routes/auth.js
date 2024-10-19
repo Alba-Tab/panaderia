@@ -21,13 +21,19 @@ router.post('/login', async (req, res) => {
         
         const user = result.rows[0]; 
     
-        // Verifica la contraseña cifrada
-        //const isMatch = await bcrypt.compare(password, user.contrasena);
         if (password !== user.contrasena) {
             await pool.query('INSERT INTO bitacora (metodo, ruta, ip, usuario, mensaje) VALUES ($1, $2, $3, $4, $5)', 
                 ['POST', '/login', req.ip, codigo, 'Contraseña incorrecta']);
             return res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
         }
+
+        // Verifica la contraseña cifrada
+        // const isMatch = await bcrypt.compare(password, user.contrasena);
+        // if (!isMatch) {
+        //     await pool.query('INSERT INTO bitacora (metodo, ruta, ip, usuario, mensaje) VALUES ($1, $2, $3, $4, $5)', 
+        //         ['POST', '/login', req.ip, codigo, 'Contraseña incorrecta']);
+        //     return res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
+        // }
 
         const token = jwt.sign({ 
             codigo: user.codigo, 
