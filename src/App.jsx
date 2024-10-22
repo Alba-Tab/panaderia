@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import MainLayout from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
-import Categories from './pages/categories'; // Asegúrate de que esta ruta sea correcta
+import Categories from './pages/categories'; 
 
 const isAuthenticated = () => {
   const token = localStorage.getItem('token');

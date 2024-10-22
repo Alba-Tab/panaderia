@@ -11,7 +11,7 @@ const MainLayout = () => {
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
         if (storedUser) {
-            setUserRole(storedUser.ide_rol); // Utilizas el ide_rol desde localStorage
+            setUserRole(storedUser.ide_rol); // Utiliza el ide_rol desde localStorage
             
         } else {
             console.error('No se encontró el usuario en localStorage');

@@ -23,6 +23,14 @@ const RoleModal = ({ role, onClose, onUpdate }) => {
         }
     };
 
+    const handlePermisoChange = (id) => {
+        // Crear una nueva copia de los permisos con el estado actualizado
+        const updatedPermisos = permisos.map(permiso =>
+            permiso.id === id ? { ...permiso, tiene: !permiso.tiene } : permiso
+        );
+        setPermisos(updatedPermisos);
+    };
+
     return (
         <div className="modal-background">
             <div className="modal-content">
@@ -35,10 +43,7 @@ const RoleModal = ({ role, onClose, onUpdate }) => {
                         <input
                             type="checkbox"
                             checked={permiso.tiene}
-                            onChange={() => {
-                                permiso.tiene = !permiso.tiene; // Alternar estado del permiso
-                                setPermisos([...permisos]); // Actualizar el estado
-                            }}
+                            onChange={() => handlePermisoChange(permiso.id)}
                         />
                         <label>{permiso.nombre}</label>
                     </div>
