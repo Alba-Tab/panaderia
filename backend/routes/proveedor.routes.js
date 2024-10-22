@@ -8,10 +8,10 @@ const {
 } = require("../controllers/proveedor.controllers");
 const router = express.Router();
 
-router.get("/proveedores", getProveedores);
-router.get("/proveedores/:codigo", getProveedor);
-router.post("/proveedores", createProveedor);
-router.put("/proveedores/:codigo", updateProveedor);
-router.delete("/proveedores/:codigo", deleteProveedor);
+router.get("/api/proveedores", getProveedores);
+router.get("/api/proveedores/:codigo", getProveedor);
+router.post("/api/proveedores", createProveedor);
+router.put("/api/proveedores/:codigo", updateProveedor);
+router.delete("/api/proveedores/:codigo", deleteProveedor);
 
 module.exports = router;

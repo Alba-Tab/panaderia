@@ -9,14 +9,14 @@ const {
 const router = express.Router();
 
 // Obtener todos los permisos
-router.get("/permisos", getPermisos);
+router.get("/api/permisos", getPermisos);
 
-router.get("/permisos/:id", getPermiso);
+router.get("/api/permisos/:id", getPermiso);
 
-router.post("/permisos", createPermiso);
+router.post("/api/permisos", createPermiso);
 
-router.put("/permisos/:id", updatePermiso);
+router.put("/api/permisos/:id", updatePermiso);
 
-router.delete("/permisos/:id", deletePermiso);
+router.delete("/api/permisos/:id", deletePermiso);
 
 module.exports = router;
