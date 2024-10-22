@@ -1,13 +1,17 @@
-const express = require('express');
-const { deleteRol, getRol, getRoles } = require('../controllers/roles.controllers');
+const express = require("express");
+const {
+  deleteRol,
+  getRoles,
+  createRol,
+} = require("../controllers/roles.controllers");
 const router = express.Router();
 
 // Obtener todos los roles
-router.get('/roles', getRoles);
+router.get("/roles", getRoles);
 
-router.post('/roles', getRol);
+router.post("/roles", createRol);
 
 // Eliminar un rol
-router.delete('/roles/:ide', deleteRol);
+router.delete("/roles/:ide", deleteRol);
 
 module.exports = router;
