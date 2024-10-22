@@ -1,10 +1,8 @@
 const express = require('express');
 const pool = require('../db');
-const router = express.Router();
-
 
 // Ruta para obtener todos los usuarios (solo para administradores)
-router.get('/usuarios', async (req, res) => {
+const getUsuarios = async (req, res) => {
     const { codigo, userRole } = req.query;
     
     try {
@@ -21,10 +19,10 @@ router.get('/usuarios', async (req, res) => {
         console.error('Error al cargar los usuarios:', error);
         res.status(500).json({ message: 'Error al cargar los usuarios' });
     }
-});
+};
 
 // Ruta para obtener los datos del usuario logueado
-router.get('/usuarios/me', async (req, res) => {
+const getUsuarioLogueado = async (req, res) => {
     const { codigo } = req.query; // Cambiar a req.query
     
     try {
@@ -34,10 +32,10 @@ router.get('/usuarios/me', async (req, res) => {
         console.error('Error al obtener el usuario logueado:', error);
         res.status(500).json({ message: 'Error al obtener el usuario' });
     }
-});
+};
 
 // Ruta saber si un usuario es existe
-router.get('/usuarios/existe', async (req, res) => {
+const existeUsuario = async (req, res) => {
     const { codigo } = req.query; // Cambiar a req.query
     
     try {
@@ -50,10 +48,10 @@ router.get('/usuarios/existe', async (req, res) => {
         console.error('Error al obtener el usuario :', error);
         res.status(500).json({ message: 'Error al obtener el usuario' });
     }
-});
+};
 
 // Ruta para obtener el último código de usuario
-router.get('/usuarios/lastCode', async (req, res) => {
+const getUltimoCodigoUsuario = async (req, res) => {
     try {
         const result = await pool.query('SELECT codigo FROM usuario ORDER BY codigo DESC LIMIT 1'); // Asegúrate de que 'codigo' sea la columna que contiene el código del usuario
         if (result.rows.length > 0) {
@@ -65,22 +63,10 @@ router.get('/usuarios/lastCode', async (req, res) => {
         console.error('Error al obtener el último código:', error);
         res.status(500).json({ message: 'Error al obtener el último código' });
     }
-});
-
-
-// Ruta para obtener todos los roles
-router.get('/roles', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM rol'); // Ajusta la consulta según tu base de datos
-        res.json(result.rows);
-    } catch (error) {
-        console.error('Error al obtener roles:', error);
-        res.status(500).json({ message: 'Error al obtener roles' });
-    }
-});
+};
 
 // Ruta para agregar un usuario
-router.post('/add', async (req, res) => {
+const createUser = async (req, res) => {
     const { codigo, nombre, contrasena, sexo, telefono, ide_rol } = req.body; // Cambia `req.query` a `req.body`
 
     try {
@@ -99,10 +85,10 @@ router.post('/add', async (req, res) => {
         console.error('Error al agregar el usuario:', error);
         res.status(500).json({ message: 'Error al agregar el usuario' });
     }
-});
+};
 
 // Ruta para modificar un usuario
-router.put('/usuarios/:codigo', async (req, res) => {
+const updateUser = async (req, res) => {
     const { codigo } = req.params; // Código del usuario a modificar
     const { nombre,contrasena, telefono,rol } = req.body; // Nuevos valores
     
@@ -117,10 +103,10 @@ router.put('/usuarios/:codigo', async (req, res) => {
         console.error('Error al modificar el usuario:', error);
         res.status(500).json({ message: 'Error al modificar el usuario' });
     }
-});
+};
 
 // Ruta para eliminar un usuario
-router.delete('/usuarios/:codigo', async (req, res) => {
+const deleteUser = async (req, res) => {
     const { codigo } = req.params; // Código del usuario a eliminar
     const userRole = req.query.userRole; // Obtener userRole de los parámetros de la consulta
 
@@ -134,8 +120,16 @@ router.delete('/usuarios/:codigo', async (req, res) => {
         console.error('Error al eliminar el usuario:', error);
         res.status(500).json({ message: 'Error al eliminar el usuario' });
     }
-});
+};
 
 
-module.exports = router;
+module.exports = {
+    getUsuarios,
+    getUsuarioLogueado,
+    existeUsuario,
+    getUltimoCodigoUsuario,
+    createUser,
+    updateUser,
+    deleteUser
+}
 

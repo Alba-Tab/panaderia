@@ -1,9 +1,8 @@
 const express = require('express');
 const pool = require('../db');
-const router = express.Router();
 
 // Obtener todos los roles
-router.get('/roles', async (req, res) => {
+const getRoles = async (req, res) => {
     try {
         const result = await pool.query('SELECT ide, nombre FROM rol');
         res.json(result.rows);
@@ -11,9 +10,9 @@ router.get('/roles', async (req, res) => {
         console.error('Error al obtener roles:', error);
         res.status(500).json({ message: 'Error al obtener roles' });
     }
-});
+};
 
-router.post('/roles', async (req, res) => {
+const getRol = async (req, res) => {
     console.log(req.body);
     const { ide, nombre, permisos } = req.body;
 
@@ -34,10 +33,10 @@ router.post('/roles', async (req, res) => {
         console.error('Error al agregar el rol:', error);
         return res.status(500).json({ message: 'Error al agregar el rol' });
     }
-});
+};
 
 // Eliminar un rol
-router.delete('/roles/:ide', async (req, res) => {
+const deleteRol = async (req, res) => {
     const { ide } = req.params;
 
     try {
@@ -48,6 +47,10 @@ router.delete('/roles/:ide', async (req, res) => {
         console.error('Error al eliminar el rol:', error);
         return res.status(500).json({ message: 'Error al eliminar el rol' });
     }
-});
+};
 
-module.exports = router;
+module.exports = {
+    getRoles,
+    getRol,
+    deleteRol
+}
