@@ -9,9 +9,9 @@ const {
 const router = express.Router();
 
 router.get("/api/rol/permisos", getRoles_Permisos);
-router.get("/api/Rol/Permisos/:Id_Rol", getRol_Permisos);
-router.get("/api/Rol/Permisos/:Id_Permiso/:Id_Rol", getRol_Permiso);
-router.post("/api/Rol/Permisos", postRol_Permiso);
-router.delete("/api/Rol/Permisos/:Id_Permiso/:Id_Rol", deleteRol_Permiso);
+router.get("/api/rol/permisos/:ide_rol", getRol_Permisos);
+router.get("/api/rol/permisos/:ide_permiso/:ide_rol", getRol_Permiso);
+router.post("/api/rol/permisos", postRol_Permiso);
+router.delete("/api/rol/permisos/:ide_permiso/:ide_rol", deleteRol_Permiso);
 
 module.exports = router;

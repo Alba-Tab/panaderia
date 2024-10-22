@@ -11,7 +11,6 @@ const getRoles = async (req, res) => {
 };
 
 const getRol = async (req, res) => {
-  console.log(req.body);
   const { ide, nombre, permisos } = req.body;
 
   try {
@@ -20,7 +19,7 @@ const getRol = async (req, res) => {
       ide,
     ]);
     if (existingRole.rows.length > 0) {
-      return res.json({ exists: true });
+      return res.json({ message: "Este rol ya existe" });
     }
 
     // Insertar nuevo rol
@@ -40,7 +39,6 @@ const getRol = async (req, res) => {
 
 const createRol = async (req, res) => {
   try {
-    // SI NO LO TENES CON GENERAR AUTOMATICAMENTE ID DE ROL
     const { ide, nombre } = req.body;
     // Verificar si el rol ya existe
     const existingRole = await pool.query("SELECT * FROM rol WHERE ide = $1", [
@@ -54,17 +52,7 @@ const createRol = async (req, res) => {
       ide,
       nombre,
     ]);
-
-    //SI LO TENES CON GENERARA AUTOMATICAMENTE ID DE ROL
-    // const { nombre } = req.body;
-
-    // // Insertar nuevo rol
-    // await pool.query("INSERT INTO rol (nombre) VALUES ($1)", [
-    //   ide,
-    //   nombre,
-    // ]);
-
-    return res.status(201).json({ message: "Rol creado exitosamente" });
+    return res.json({ message: "Rol creado exitosamente" });
   } catch (error) {
     console.error("Error al crear rol:", error);
     res.status(500).json({ message: "Error al crear rol" });
@@ -94,7 +82,7 @@ const deleteRol = async (req, res) => {
   try {
     // Eliminar el rol de la base de datos
     await pool.query("DELETE FROM rol WHERE ide = $1", [ide]);
-    return res.status(204).send().json({ message: "eliminado exitosamente" }); // No content
+    return res.json({ message: "eliminado exitosamente" });
   } catch (error) {
     console.error("Error al eliminar el rol:", error);
     return res.status(500).json({ message: "Error al eliminar el rol" });
