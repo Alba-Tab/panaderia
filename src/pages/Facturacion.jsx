@@ -9,7 +9,7 @@ const Facturas = () => {
     useEffect(() => {
  const fetchFacturas = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/factura/factura');
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/factura/factura`);
                 
                 if (Array.isArray(response.data)) {
                     setFacturas(response.data);

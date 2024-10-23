@@ -11,7 +11,7 @@ export const AddRoleModal = ({onClose,onUpdate}) => {
   useEffect(() => {
     const fetchPermisos = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/permisos/permisos');  // Endpoint para obtener permisos
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/permisos/permisos`); 
             setPermisos(response.data); // Supone que la respuesta es un array de permisos
         } catch (error) {
             console.error('Error al cargar los permisos:', error);
@@ -34,7 +34,7 @@ export const AddRoleModal = ({onClose,onUpdate}) => {
     e.preventDefault();
     setError(''); 
     try {
-        const response = await axios.post('http://localhost:3001/roles/roles', {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/roles/roles`, {
             ide,
             nombre,
             permisos: selectedPermisos

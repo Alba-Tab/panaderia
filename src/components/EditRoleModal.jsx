@@ -10,7 +10,7 @@ export const EditRoleModal = ({ role, onClose, onUpdate }) => {
     useEffect(() => {
         const fetchPermisos = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/permisos/permisos');
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/permisos/permisos`);
                 setPermisos(response.data); // Supone que la respuesta es un array de permisos
             } catch (error) {
                 console.error('Error al cargar los permisos:', error);
@@ -30,7 +30,7 @@ export const EditRoleModal = ({ role, onClose, onUpdate }) => {
 
     const handleSave = async () => {
         try {
-            await axios.put(`http://localhost:3001/roles/roles/${role.ide}`, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/roles/roles/${role.ide}`, {
                 nombre,
                 permisos: selectedPermisos
             });

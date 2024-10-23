@@ -11,8 +11,8 @@ const Login = ({ setLoggedIn }) => {
   const handleLogin = async(e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/auth/login', { codigo, password });
-      
+      console.log(`${import.meta.env.VITE_API_URL}`);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, { codigo, password });
       // Guardar el token en localStorage o en el estado
       localStorage.setItem('token', response.data.token);
       
@@ -20,13 +20,14 @@ const Login = ({ setLoggedIn }) => {
       // Redirigir a la página de inicio o dashboard
       navigate('/dashboard');
   } catch (error) {
+    console.error(`import.meta.env.VITE_API_URL: ${import.meta.env.VITE_API_URL}`);
     setError(error.response?.data.message || 'Error en el inicio de sesión');
   }
   };
 
   return (
     <div className="login-container">
-      
+   
       <form onSubmit={handleLogin}>
         
         <h2>Login</h2>

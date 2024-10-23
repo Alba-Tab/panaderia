@@ -24,20 +24,20 @@ const ProfileModal = ({ onClose, userRole }) => {
             const userRole = JSON.parse(localStorage.getItem('user')).ide_rol;
 
             try {
-                const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, {
+                const userResponse = await axios.get(`${import.meta.env.VITE_API_URL}/user/usuarios/me`, {
                     params: { codigo }
                 });
                 const currentUser = userResponse.data;
                 setUsers([currentUser]);
 
-                const response = await axios.get('http://localhost:3001/user/usuarios', {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/usuarios`, {
                     params: { codigo, userRole }
                 });
                 if (response.data.length > 0) {
                     setUsers(prevUsers => [...prevUsers, ...response.data]);
                 }
 
-                const rolesResponse = await axios.get('http://localhost:3001/user/roles');
+                const rolesResponse = await axios.get(`${import.meta.env.VITE_API_URL}/user/roles`);
                 setRoles(rolesResponse.data);
             } catch (error) {
                 console.error('Error al cargar los usuarios o roles:', error);
@@ -47,19 +47,23 @@ const ProfileModal = ({ onClose, userRole }) => {
     }, [userRole]);
 
     const handleUpdate = async () => {
-        // Actualiza la lista de usuarios
         const codigo = JSON.parse(localStorage.getItem('user')).codigo;
-        const userResponse = await axios.get(`http://localhost:3001/user/usuarios/me`, { params: { codigo } });
-        const currentUser = userResponse.data;
-        setUsers([currentUser]);
-
-        const response = await axios.get('http://localhost:3001/user/usuarios', {
-            params: { codigo, userRole }
-        });
-        if (response.data.length > 0) {
-            setUsers(prevUsers => [...prevUsers, ...response.data]);
+        try {
+            const userResponse = await axios.get(`${import.meta.env.VITE_API_URL}/user/usuarios/me`, { params: { codigo } });
+            const currentUser = userResponse.data;
+            setUsers([currentUser]);
+    
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/usuarios`, {
+                params: { codigo, userRole }
+            });
+            if (response.data.length > 0) {
+                setUsers(prevUsers => [...prevUsers, ...response.data]);
+            }
+        } catch (error) {
+            console.error('Error al actualizar la lista de usuarios:', error);
         }
     };
+    
 
     const handleModify = () => {
         if (selectedUser) {
@@ -71,7 +75,7 @@ const ProfileModal = ({ onClose, userRole }) => {
         if (selectedUser) {
             try {
                 const userRole = JSON.parse(localStorage.getItem('user')).ide_rol;
-                await axios.delete(`http://localhost:3001/user/usuarios/${selectedUser}`, { params: { userRole } });
+                await axios.delete(`${import.meta.env.VITE_API_URL}/user/usuarios/${selectedUser}`, { params: { userRole } });
                 setUsers(users.filter(user => user.codigo !== selectedUser)); // Actualizar la lista
             } catch (error) {
                 console.error('Error al eliminar el usuario:', error);
@@ -88,7 +92,7 @@ const ProfileModal = ({ onClose, userRole }) => {
     const handleDeleteRole = async () => {
         if (selectedRole) {
             try {
-                await axios.delete(`http://localhost:3001/user/roles/${selectedRole}`);
+                await axios.delete(`${import.meta.env.VITE_API_URL}/user/roles/${selectedRole}`);
                 setRoles(roles.filter(role => role.ide !== selectedRole)); // Actualizar la lista de roles
             } catch (error) {
                 console.error('Error al eliminar el rol:', error);

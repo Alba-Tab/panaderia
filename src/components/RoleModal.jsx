@@ -7,7 +7,7 @@ const RoleModal = ({ role, onClose, onUpdate }) => {
 
     useEffect(() => {
         const fetchPermisos = async () => {
-            const response = await axios.get(`http://localhost:3001/user/roles/${role.id}/permisos`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/roles/${role.id}/permisos`);
             setPermisos(response.data);
         };
         fetchPermisos();
@@ -15,7 +15,7 @@ const RoleModal = ({ role, onClose, onUpdate }) => {
 
     const handleSave = async () => {
         try {
-            await axios.put(`http://localhost:3001/user/roles/${role.id}`, { nombre, permisos });
+            await axios.put(`${import.meta.env.VITE_API_URL}/user/roles/${role.id}`, { nombre, permisos });
             onUpdate(); // Llamar a onUpdate para refrescar la lista de roles
             onClose(); // Cerrar el modal
         } catch (error) {

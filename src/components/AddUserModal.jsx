@@ -15,7 +15,7 @@ export const AddUserModal = ({ onClose, onUpdate }) => {
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/roles');
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/roles`);
                 setRoles(response.data); // Asumiendo que la respuesta es un array de roles
             } catch (error) {
                 console.error('Error al cargar los roles:', error);
@@ -29,7 +29,7 @@ export const AddUserModal = ({ onClose, onUpdate }) => {
     // Obtener el último código de usuario para la generación automática
     const fetchLastUserCode = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/user/usuarios/lastCode'); // Asegúrate de tener esta ruta en tu backend
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/usuarios/lastCode`); // Asegúrate de tener esta ruta en tu backend
             setCodigo(response.data.codigo); // Supone que la respuesta tiene una propiedad 'codigo'
         } catch (error) {
             console.error('Error al obtener el último código:', error);
@@ -39,7 +39,7 @@ export const AddUserModal = ({ onClose, onUpdate }) => {
         e.preventDefault();
         setError(''); // Limpiar errores
         try {            
-            const response = await axios.post(`http://localhost:3001/user/add`, {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/add`, {
                 codigo,
                 nombre,
                 contrasena,

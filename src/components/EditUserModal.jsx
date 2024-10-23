@@ -13,7 +13,7 @@ const EditUserModal = ({ user, onClose, onUpdate }) => {
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/roles');
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/roles`);
                 setRoles(response.data); // Asumiendo que la respuesta es un array de roles
             } catch (error) {
                 console.error('Error al cargar los roles:', error);
@@ -33,7 +33,7 @@ const EditUserModal = ({ user, onClose, onUpdate }) => {
 
     const handleSave = async () => {
         try {
-            await axios.put(`http://localhost:3001/user/usuarios/${user.codigo}`, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/user/usuarios/${user.codigo}`, {
                 nombre,
                 contrasena,
                 telefono,

@@ -11,7 +11,7 @@ const Categorias = () => {
     useEffect(() => {
         const fetchCategorias = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/categorias'); // ruta modificada
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/categorias`); // ruta modificada
                 setCategorias(response.data); // Asumiendo que la respuesta es un array de categorías
             } catch (error) {
                 console.error('Error al cargar las categorías:', error);
